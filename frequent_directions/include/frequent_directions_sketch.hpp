@@ -20,7 +20,7 @@
 #ifndef _FREQUENT_DIRECTIONS_SKETCH_HPP_
 #define _FREQUENT_DIRECTIONS_SKETCH_HPP_
 
-#include <eigen3/Eigen/Core>
+#include <Eigen/Core>
 
 #if __cplusplus < 201402L
 #error "The Frequent Directions sketch requires a compiler that supports C++14"

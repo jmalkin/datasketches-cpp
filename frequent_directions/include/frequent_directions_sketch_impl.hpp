@@ -22,7 +22,7 @@
 
 #include "frequent_directions_sketch.hpp"
 
-#include <eigen3/Eigen/Core>
+#include <Eigen/Core>
 
 #include <iostream>
 

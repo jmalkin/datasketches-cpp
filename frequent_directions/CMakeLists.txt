@@ -40,3 +40,24 @@ install(FILES
 		include/frequent_directions_sketch.hpp
 		include/frequent_directions_sketch_impl.hpp	
   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/DataSketches")
+
+# require Eigen
+cmake_policy(SET CMP0097 NEW)
+include(ExternalProject)
+ExternalProject_Add(Eigen3
+  GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+  GIT_TAG 3.4.0
+  GIT_SHALLOW true
+  GIT_SUBMODULES ""
+  INSTALL_DIR /tmp/eigen3
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=/tmp/Eigen3
+)
+find_package(Eigen3 REQUIRED)
+#ExternalProject_Get_property(Eigen3 INSTALL_DIR)
+#set(Eigen3_INSTALL_DIR ${INSTALL_DIR})
+#message("Source dir of Eigen3 = ${Eigen3_INSTALL_DIR}")
+#target_include_directories(frequent_directions
+#  INTERFACE ${Eigen3_INSTALL_DIR})
+message("Found Eigen3: ${Eigen3_CONFIG}")
+target_link_libraries(frequent_directions INTERFACE Eigen3::Eigen)
+#add_dependencies(frequent_directions Eigen3)
