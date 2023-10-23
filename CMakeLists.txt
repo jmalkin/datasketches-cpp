@@ -118,12 +118,9 @@ add_subdirectory(req)
 add_subdirectory(quantiles)
 add_subdirectory(count)
 add_subdirectory(density)
+add_subdirectory(frequent_directions)
 
-if (WITH_PYTHON)
-  add_subdirectory(python)
-endif()
-
-target_link_libraries(datasketches INTERFACE hll cpc kll fi theta sampling req quantiles count)
+target_link_libraries(datasketches INTERFACE hll cpc kll fi theta sampling req quantiles count frequent_directions)
 
 if (COVERAGE)
   find_program(LCOV_PATH NAMES "lcov")
