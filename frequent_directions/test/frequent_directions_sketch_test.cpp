@@ -57,4 +57,26 @@ TEST_CASE("fd sketch: basic operation", "[frequent_directions]") {
   std::cout << fd.to_string();
 }
 
+TEST_CASE("fd sketch: reduce rank", "[frequent_directions]") {
+  int k = 4;
+  int d = 16;
+  frequent_directions fd(k, d);
+
+  // create matrix with values along an anti-diagonal
+  Eigen::VectorXd input(d);
+  for (int i = 0; i < 2 * k; ++i) {
+    if (i > 0)
+      input(i - 1) = 0.0;
+    input(i) = i * 1.0;
+    fd.update(input);
+  }
+  REQUIRE(fd.get_n() == 2 * k);
+
+  input(2 * k - 1) = 0.0;
+  input(2 * k) = 2.0 * k;
+  std::cout << fd.to_string() << std::endl;
+  fd.update(input); // triggers reduce_rank()
+  std::cout << fd.to_string() << std::endl;
+}
+
 }

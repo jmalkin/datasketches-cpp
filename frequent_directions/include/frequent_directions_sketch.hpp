@@ -21,6 +21,8 @@
 #define _FREQUENT_DIRECTIONS_SKETCH_HPP_
 
 #include <Eigen/Core>
+//#include <Eigen/Eigenvalues>
+#include <Eigen/SVD>
 
 #if __cplusplus < 201402L
 #error "The Frequent Directions sketch requires a compiler that supports C++14"
@@ -30,19 +32,36 @@ namespace datasketches {
 
 class frequent_directions {
   public:
+    using Matrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+    using VectorXd = Eigen::VectorXd;
+
     explicit frequent_directions(int k, int d);
 
     // ultimately need to copy values into our
     // matrix so rvalues don't buy us anything here
     void update(const Eigen::VectorXd& vector);
 
-    std::string to_string() const;
+    void merge(const frequent_directions& fd);
 
+    std::string to_string(bool print_values = false,
+                          bool print_vectors = false,
+                          bool apply_compensation = false) const;
+
+    VectorXd get_singular_values(bool compensative);
+
+    Matrix get_projection_matrix();
+
+    Matrix get_result(bool compensative = false);
+    
     bool is_empty() const;
 
     int get_k() const;
     int get_d() const;
     int get_n() const;
+    int get_num_rows() const;
+
+    double get_cfd_adjustment() const;
+    double get_rfd_adjustment() const;
 
   private:
     void reduce_rank();
@@ -54,7 +73,13 @@ class frequent_directions {
     size_t n_;
 
     double sv_adjustment_;
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> B_;
+
+    //using BDCSVD = Eigen::BDCSVD<Matrix, Eigen::DecompositionOptions::ComputeThinV>;
+    using BDCSVD = Eigen::BDCSVD<Matrix>;
+
+    Matrix B_;
+    VectorXd sv_;    // singular values
+    BDCSVD solver_;  // pre-allocates storage for efficiency
 };
 
 } // namespace datasketches
